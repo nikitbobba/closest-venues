@@ -38,7 +38,7 @@ function showPosition(position) {
     x.innerHTML += "<h4>Closest Venues</h4>"
     for (var i in [0,1,2]) {
         //console.log(venues_object[i]["name"]);
-        x.innerHTML += venues_object[i]["name"]+"<br>";
+        x.innerHTML += "<li>" + venues_object[i]["name"] + "</li>";
     }
     console.log(photo_url)
     var photos_obj = JSON.parse(Get(photo_url));
