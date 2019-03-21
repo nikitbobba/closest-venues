@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Click Transaction</p>
+
+<button onclick="getLocation()">Transaction</button>
+
+<p id="demo"></p>
+
+<script>
+var x = document.getElementById("demo");
+
+function getLocation() {
+	console.log("got here");
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+        console.log("got here");
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude + "<br>";
+    
+    var ll = position.coords.latitude + "," + position.coords.longitude;
+
+    var url = "https://api.foursquare.com/v2/venues/search?client_id=XXW13VJUYN5POF1YWITBRJ31Y4XUE1IH1WGSNRCG1XOLSFQ4&client_secret=C1C0QUVTGYUAV013ERXP0Z5LL2A5MN4DAJDA2LSZYUEALAIK&ll=" + ll + "&v=20160108";
+    console.log(url);
+    var json_obj = JSON.parse(Get(url));
+	//console.log("this is the author name: "+json_obj.response.venues);
+    var venues_object = json_obj["response"]["venues"];
+    //console.log(venues_object);
+    var closest_id = venues_object[0]["id"];
+    var photo_url = "https://api.foursquare.com/v2/venues/"+ closest_id + "/photos?client_id=XXW13VJUYN5POF1YWITBRJ31Y4XUE1IH1WGSNRCG1XOLSFQ4&client_secret=C1C0QUVTGYUAV013ERXP0Z5LL2A5MN4DAJDA2LSZYUEALAIK&v=20160108";
+    x.innerHTML += "<h4>Closest Venues</h4>"
+    for (var i in [0,1,2]) {
+        //console.log(venues_object[i]["name"]);
+        x.innerHTML += venues_object[i]["name"]+"<br>";
+    }
+    console.log(photo_url)
+    var photos_obj = JSON.parse(Get(photo_url));
+    
+
+
+    var photos_object = photos_obj["response"]["photos"]["items"];
+    console.log(photos_object);
+
+    x.innerHTML += "<h4>Picture of Closest Venue</h4>"
+    for (var i in [0]) {
+        //console.log(venues_object[i]["name"]);
+        console.log(photos_object[i]);
+        console.log(photos_object[i]["prefix"] + "300x500"+photos_object[i]["suffix"]);
+        x.innerHTML += "<img src = " + photos_object[i]['prefix'] + "300x500"+ photos_object[i]['suffix'] + "></img>" + "<br>";
+    }
+
+
+
+
+    //Object.keys(json_obj).forEach(function(key) {
+    //    console.log(key, json_obj[key]);
+    //});
+}
+
+function Get(yourUrl){
+    var Httpreq = new XMLHttpRequest(); // a new request
+    Httpreq.open("GET",yourUrl,false);
+    Httpreq.send(null);
+    return Httpreq.responseText;          
+}
+
+
+
+</script>
+
+</body>
+</html>
