@@ -30,57 +30,39 @@ function showPosition(position) {
 
     var url = "https://api.foursquare.com/v2/venues/search?client_id=XXW13VJUYN5POF1YWITBRJ31Y4XUE1IH1WGSNRCG1XOLSFQ4&client_secret=C1C0QUVTGYUAV013ERXP0Z5LL2A5MN4DAJDA2LSZYUEALAIK&ll=" + ll + "&intent='match'&v=20160108&radius=100";
     
-    console.log(url);
     var json_obj = JSON.parse(Get(url));
-	//console.log("this is the author name: "+json_obj.response.venues);
     var venues_object = json_obj["response"]["venues"];
-    console.log(venues_object);
     
-
     //Getting List of Venues
     var closest_id = venues_object[0]["id"];
     var photo_url = "https://api.foursquare.com/v2/venues/"+ closest_id + "/photos?client_id=XXW13VJUYN5POF1YWITBRJ31Y4XUE1IH1WGSNRCG1XOLSFQ4&client_secret=C1C0QUVTGYUAV013ERXP0Z5LL2A5MN4DAJDA2LSZYUEALAIK&v=20160108";
    
 
-
-
-
     //Highest Probable Venue
     x.innerHTML += "<h4>Most Probable Venue</h4>"
     x.innerHTML += "Venue: " + venues_object[0]["name"] + "<br>";
     x.innerHTML += "Category: " + venues_object[0]["categories"][0]["name"] + "<br>";
-    console.log(venues_object[0]["categories"][0]["name"]);
-    console.log(venues_object[0]["id"]);
     var venue_id = venues_object[0]["id"];
+
+
+    //Capturing Logo of Venue
     var logo_url = "https://api.foursquare.com/v2/venues/" + venue_id + "/links?client_id=XXW13VJUYN5POF1YWITBRJ31Y4XUE1IH1WGSNRCG1XOLSFQ4&client_secret=C1C0QUVTGYUAV013ERXP0Z5LL2A5MN4DAJDA2LSZYUEALAIK&v=20160108";
     
     var logo_obj = JSON.parse(Get(logo_url));
-    console.log(logo_obj);
     var logo_object = logo_obj["response"]["links"]["items"];
+
+    //Only if logo is present, display it
     for (var i in logo_object) {
-        console.log(logo_object[i]);
         if (logo_object[i]["provider"]["id"] == "factual"){
-            console.log("logo.clearbit.com/" + logo_object[i]["url"]);
             var logo_img = "<img src='http://logo.clearbit.com//" + logo_object[i]["url"] + "'></img>";
-            console.log(logo_img);
             x.innerHTML += logo_img;
-            //x.innerHTML += 
-            //x.innerHTML += "<img src=" + "logo.clearbit.com/" + logo_object[i]["url"] + ">";
         }
     }
 
-    
-    
-    
-
-
-
     //Capturing Image
-    console.log(photo_url)
     var photos_obj = JSON.parse(Get(photo_url));
 
     var photos_object = photos_obj["response"]["photos"]["items"];
-    console.log(photos_object);
 
     x.innerHTML += "<h4>Picture of Closest Venue</h4>"
     for (var i in [0]) {
@@ -90,33 +72,17 @@ function showPosition(position) {
         x.innerHTML += "<img src = " + photos_object[i]['prefix'] + "300x500"+ photos_object[i]['suffix'] + "></img>" + "<br>";
     }
 
-
     //Next Probable Venues
     x.innerHTML += "<h4>Next Closest Venues</h4>"
     for (var i in [1,2,3,4]) {
-        console.log(i)
         if (i == 0) {
             continue;
         }
-        //console.log(venues_object[i]["name"]);
         console.log("Distance is " + venues_object[i]["location"]["distance"]);
         if (venues_object[i]["location"]["distance"] >= 20){
             x.innerHTML += "<li>" + venues_object[i]["name"] + "</li>";
         }
     }
-    
-
-
-
-
-
-
-
-
-
-    //Object.keys(json_obj).forEach(function(key) {
-    //    console.log(key, json_obj[key]);
-    //});
 }
 
 function Get(yourUrl){
